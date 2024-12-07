@@ -65,20 +65,20 @@ def main():
 
         face_analysis = os.path.join(config.misc_model_dir, "misc/face_analysis")
         os.makedirs(face_analysis, exist_ok=True)
-        for model in [
-            "1k3d68.onnx",
-            "2d106det.onnx",
-            "face_landmarker_v2_with_blendshapes.task",
-            "genderage.onnx",
-            "glintr100.onnx",
-            "scrfd_10g_bnkps.onnx",
-        ]:
-            if not os.path.exists(os.path.join(face_analysis, model)):
-                logger.info(f"Downloading {model} to {face_analysis}")
-                os.system(
-                    f"wget -P {face_analysis} https://huggingface.co/memoavatar/memo/raw/main/misc/face_analysis/models/{model}"
-                )
-        logger.info(f"Use face analysis models from {face_analysis}")
+        # for model in [
+        #     "1k3d68.onnx",
+        #     "2d106det.onnx",
+        #     "face_landmarker_v2_with_blendshapes.task",
+        #     "genderage.onnx",
+        #     "glintr100.onnx",
+        #     "scrfd_10g_bnkps.onnx",
+        # ]:
+        #     if not os.path.exists(os.path.join(face_analysis, model)):
+        #         logger.info(f"Downloading {model} to {face_analysis}")
+        #         os.system(
+        #             f"wget -P {face_analysis} https://huggingface.co/memoavatar/memo/raw/main/misc/face_analysis/models/{model}"
+        #         )
+        # logger.info(f"Use face analysis models from {face_analysis}")
 
         vocal_separator = os.path.join(config.misc_model_dir, "misc/vocal_separator/Kim_Vocal_2.onnx")
         if os.path.exists(vocal_separator):
@@ -86,9 +86,9 @@ def main():
         else:
             logger.info(f"Downloading vocal separator to {vocal_separator}")
             os.makedirs(os.path.dirname(vocal_separator), exist_ok=True)
-            os.system(
-                f"wget -P {os.path.dirname(vocal_separator)} https://huggingface.co/memoavatar/memo/raw/main/misc/vocal_separator/Kim_Vocal_2.onnx"
-            )
+            # os.system(
+            #     f"wget -P {os.path.dirname(vocal_separator)} https://huggingface.co/memoavatar/memo/raw/main/misc/vocal_separator/Kim_Vocal_2.onnx"
+            # )
     else:
         logger.info(f"Loading manually specified model path: {config.model_name_or_path}")
         face_analysis = os.path.join(config.model_name_or_path, "misc/face_analysis")
