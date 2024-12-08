@@ -32,6 +32,7 @@ def parse_args():
 
     return parser.parse_args()
 
+
 def main():
     # Parse arguments
     args = parse_args()
@@ -46,9 +47,10 @@ def main():
         f"{os.path.basename(input_image_path).split('.')[0]}_{os.path.basename(input_audio_path).split('.')[0]}.mp4",
     )
 
+    # Delete the output video if it already exists
     if os.path.exists(output_video_path):
-        logger.info(f"Output file {output_video_path} already exists. Skipping inference.")
-        return
+        logger.info(f"Output file {output_video_path} already exists. Deleting the existing file.")
+        os.remove(output_video_path)
 
     generator = torch.manual_seed(args.seed)
 
