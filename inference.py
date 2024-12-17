@@ -39,6 +39,8 @@ def main():
     args = parse_args()
     input_image_path = args.input_image
     input_audio_path = args.input_audio
+    height = args.height
+    width = args.width
     if "wav" not in input_audio_path:
         logger.warning("MEMO might not generate full-length video for non-wav audio file.")
     output_dir = args.output_dir
