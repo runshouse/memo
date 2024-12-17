@@ -29,7 +29,7 @@ def parse_args():
     parser.add_argument("--input_audio", type=str)
     parser.add_argument("--output_dir", type=str)
     parser.add_argument("--seed", type=int, default=42)
-    parser.add_argument("--height", type=int, default=512)
+    parser.add_argument("--height", type=int, default=448)
     parser.add_argument("--width", type=int, default=256)
     return parser.parse_args()
 
@@ -39,6 +39,8 @@ def main():
     args = parse_args()
     input_image_path = args.input_image
     input_audio_path = args.input_audio
+    print(args.width)
+    print(args.height)
 
     if "wav" not in input_audio_path:
         logger.warning("MEMO might not generate full-length video for non-wav audio file.")
