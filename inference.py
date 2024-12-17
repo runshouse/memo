@@ -39,8 +39,7 @@ def main():
     args = parse_args()
     input_image_path = args.input_image
     input_audio_path = args.input_audio
-    height = args.height
-    width = args.width
+
     if "wav" not in input_audio_path:
         logger.warning("MEMO might not generate full-length video for non-wav audio file.")
     output_dir = args.output_dir
@@ -101,7 +100,7 @@ def main():
     # Processing image
     start_time = time.time()
     logger.info(f"Processing image {input_image_path}")
-    img_size = (width, height)
+    img_size = (args.width, args.height)
     pixel_values, face_emb = preprocess_image(
         face_analysis_model=face_analysis,
         image_path=input_image_path,
