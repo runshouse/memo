@@ -29,7 +29,8 @@ def parse_args():
     parser.add_argument("--input_audio", type=str)
     parser.add_argument("--output_dir", type=str)
     parser.add_argument("--seed", type=int, default=42)
-
+    parser.add_argument("--height", type=int, default=512)
+    parser.add_argument("--width", type=int, default=256)
     return parser.parse_args()
 
 
@@ -98,7 +99,7 @@ def main():
     # Processing image
     start_time = time.time()
     logger.info(f"Processing image {input_image_path}")
-    img_size = (config.resolution, config.resolution)
+    img_size = (width, height)
     pixel_values, face_emb = preprocess_image(
         face_analysis_model=face_analysis,
         image_path=input_image_path,
