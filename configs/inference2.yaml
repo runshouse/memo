@@ -1,8 +1,8 @@
 resolution: 448
-num_generated_frames_per_clip: 16
-fps: 17
-num_init_past_frames: 2
-num_past_frames: 10
+num_generated_frames_per_clip: 18
+fps: 15
+num_init_past_frames: 25
+num_past_frames: 24
 inference_steps: 9
 cfg_scale: 3.5
 
