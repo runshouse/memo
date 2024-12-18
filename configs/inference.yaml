@@ -5,8 +5,7 @@ num_init_past_frames: 2
 num_past_frames: 10
 inference_steps: 9
 cfg_scale: 3.5
-height: 512
-width: 256
+
 weight_dtype: bf16
 enable_xformers_memory_efficient_attention: true
 
