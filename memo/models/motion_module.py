@@ -63,7 +63,7 @@ class MemoryLinearAttnTemporalModule(nn.Module):
         hidden_states,
         motion_frames,
         encoder_hidden_states,
-        is_new_audio=True,
+        is_new_audio=False,
         update_past_memory=False,
     ):
         hidden_states = self.temporal_transformer(
