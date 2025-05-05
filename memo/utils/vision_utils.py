@@ -40,26 +40,28 @@ def tensor_to_video(tensor, output_video_path, input_audio_path, fps=30):
 
 
 @torch.no_grad()
-def preprocess_image(face_analysis_model: str, image_path: str, image_size: int = 512):
+
+def preprocess_image(face_analysis_model: str, image_path: str, image_height: int, image_width: int):
     """
     Preprocess the image and extract face embedding.
 
     Args:
         face_analysis_model (str): Path to the FaceAnalysis model directory.
         image_path (str): Path to the image file.
-        image_size (int, optional): Target size for resizing the image. Default is 512.
+        image_height (int): Target height for resizing the image.
+        image_width (int): Target width for resizing the image.
 
     Returns:
         tuple: A tuple containing:
-            - pixel_values (torch.Tensor): Tensor of the preprocessed image.
-            - face_emb (torch.Tensor): Tensor of the face embedding.
+            - pixel_values (torch.Tensor): Tensor of the preprocessed image [1, 3, height, width].
+            - face_emb (torch.Tensor): Tensor of the face embedding [1, embedding_dim].
     """
     # Define the image transformation
     transform = transforms.Compose(
         [
-            transforms.Resize((image_size, image_size)),
+            transforms.Resize((image_height, image_width)),  # Resize to (height, width)
             transforms.ToTensor(),
-            transforms.Normalize([0.5], [0.5]),
+            transforms.Normalize([0.5], [0.5]),  # Normalize to range [-1, 1]
         ]
     )
 
@@ -69,32 +71,33 @@ def preprocess_image(face_analysis_model: str, image_path: str, image_size: int 
         root=face_analysis_model,
         providers=["CUDAExecutionProvider", "CPUExecutionProvider"],
     )
-    face_analysis.prepare(ctx_id=0, det_size=(640, 640))
+    face_analysis.prepare(ctx_id=0, det_size=(640, 640))  # Face detection size
 
     # Load and preprocess the image
-    image = Image.open(image_path).convert("RGB")
-    pixel_values = transform(image)
-    pixel_values = pixel_values.unsqueeze(0)
+    image = Image.open(image_path).convert("RGB")  # Ensure RGB format
+    pixel_values = transform(image)  # Apply transformation
+    pixel_values = pixel_values.unsqueeze(0)  # Add batch dimension: [1, 3, height, width]
 
-    # Detect faces and extract the face embedding
+    # Convert image to BGR for face detection (required by FaceAnalysis)
     image_bgr = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    
+    # Detect faces and extract the face embedding
     faces = face_analysis.get(image_bgr)
     if not faces:
         logger.warning("No faces detected in the image. Using a zero vector as the face embedding.")
-        face_emb = np.zeros(512)
+        face_emb = np.zeros(512)  # Default zero embedding if no face is found
     else:
-        # Sort faces by size and select the largest one
+        # Sort faces by bounding box size (largest face first) and select the first face
         faces_sorted = sorted(
             faces,
             key=lambda x: (x["bbox"][2] - x["bbox"][0]) * (x["bbox"][3] - x["bbox"][1]),
             reverse=True,
         )
-        face_emb = faces_sorted[0]["embedding"]
+        face_emb = faces_sorted[0]["embedding"]  # Extract embedding for the largest face
 
     # Convert face embedding to a PyTorch tensor
-    face_emb = face_emb.reshape(1, -1)
-    face_emb = torch.tensor(face_emb)
+    face_emb = torch.tensor(face_emb, dtype=torch.float32).unsqueeze(0)  # Shape: [1, embedding_dim]
 
-    del face_analysis
+    del face_analysis  # Clean up FaceAnalysis to release resources
 
     return pixel_values, face_emb
